@@ -16,6 +16,17 @@ git checkout cd87628af4a693eeafe1bf04486cf86ba01d29b8
 git apply path/to/usb_host_library.patch
 ```
 
+### ESP32-S3 Port
+
+This repository also includes an experimental port for the ESP32-S3 using TinyUSB. The MAX3421E shield is no longer required.
+
+To build the ESP32 variant use Arduino CLI (board package `esp32` required):
+```bash
+arduino-cli compile --fqbn esp32:esp32:esp32s3 src
+```
+The port's source resides in `src/main.cpp`.
+
+
 ### SoC selection
 
 Before using the exploit change this line in the beginning of `checkm8-a5.ino` with target SoC CPID:
