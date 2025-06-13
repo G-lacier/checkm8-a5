@@ -22,9 +22,18 @@ This repository also includes an experimental port for the ESP32-S3 using TinyUS
 
 To build the ESP32 variant use Arduino CLI (board package `esp32` required):
 ```bash
-arduino-cli compile --fqbn esp32:esp32:esp32s3 src
+./arduino-cli compile --fqbn esp32:esp32:esp32s3 src
 ```
 The port's source resides in `src/main.cpp`.
+
+An `arduino-cli` binary archive (`arduino-cli_1.2.2_Linux_64bit.tar.gz`) is
+provided in the repository. Extract it with:
+
+```bash
+tar -xf arduino-cli_1.2.2_Linux_64bit.tar.gz
+```
+
+and invoke `./arduino-cli` as shown above.
 
 
 ### SoC selection
