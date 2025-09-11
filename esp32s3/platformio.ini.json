@@ -1,0 +1,60 @@
+{
+  "name": "checkm8-esp32s3",
+  "version": "1.0.0",
+  "description": "Enhanced ESP32-S3 port of checkm8 exploit with dual USB-C support and automation",
+  "keywords": ["checkm8", "esp32-s3", "usb", "automation", "ios", "dfu"],
+  "authors": [
+    {
+      "name": "ESP32-S3 Port Author",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "frameworks": ["arduino", "espidf"],
+  "platforms": ["espressif32"],
+  "build": {
+    "mcu": "esp32s3",
+    "board": "esp32-s3-devkitc-1",
+    "f_cpu": "240000000L",
+    "f_flash": "80000000L",
+    "flash_mode": "qio",
+    "partitions": "default.csv"
+  },
+  "upload": {
+    "speed": 921600,
+    "port": "auto"
+  },
+  "monitor": {
+    "speed": 115200,
+    "filters": ["esp32_exception_decoder", "time"]
+  },
+  "dependencies": {
+    "ArduinoJson": "^6.21.3",
+    "ESP32 Arduino": "^2.0.11",
+    "WiFi": "*",
+    "WebServer": "*",
+    "USB": "*"
+  },
+  "build_flags": [
+    "-DBOARD_HAS_PSRAM",
+    "-DARDUINO_USB_MODE=1",
+    "-DARDUINO_USB_CDC_ON_BOOT=1",
+    "-DCONFIG_TINYUSB_MSC_ENABLED=1",
+    "-DCONFIG_TINYUSB_HID_ENABLED=1",
+    "-DCONFIG_TINYUSB_CDC_ENABLED=1",
+    "-DCONFIG_TINYUSB_MIDI_ENABLED=0",
+    "-DCONFIG_TINYUSB_DFU_RT_ENABLED=1",
+    "-DCORE_DEBUG_LEVEL=3",
+    "-DA5_8942"
+  ],
+  "lib_deps": [
+    "bblanchon/ArduinoJson@^6.21.3"
+  ],
+  "board_build": {
+    "arduino": {
+      "partitions": "huge_app.csv"
+    },
+    "psram_type": "qspi",
+    "memory_type": "qio_qspi"
+  }
+}

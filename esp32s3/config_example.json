@@ -1,0 +1,131 @@
+{
+  "esp32s3_checkm8_config": {
+    "version": "1.0.0",
+    "hardware": {
+      "board": "esp32-s3-devkitc-1",
+      "pins": {
+        "status_led": 2,
+        "trigger_button": 0,
+        "usb_power_control": 21
+      },
+      "usb_ports": {
+        "port_0": {
+          "role": "host",
+          "description": "Primary device detection and exploitation"
+        },
+        "port_1": {
+          "role": "device",
+          "description": "Secondary functions (logging, control)"
+        }
+      }
+    },
+    "network": {
+      "wifi_mode": "ap",
+      "ap_ssid": "ESP32S3-CheckM8",
+      "ap_password": "checkm8esp32",
+      "ap_ip": "192.168.4.1",
+      "ap_gateway": "192.168.4.1",
+      "ap_subnet": "255.255.255.0"
+    },
+    "web_interface": {
+      "enabled": true,
+      "port": 80,
+      "endpoints": {
+        "dashboard": "/",
+        "api_status": "/api/status",
+        "api_exploit": "/api/exploit",
+        "api_config": "/api/config",
+        "api_reset": "/api/reset",
+        "api_devices": "/api/devices",
+        "api_schedule": "/api/schedule"
+      }
+    },
+    "automation": {
+      "enabled": false,
+      "default_interval_ms": 30000,
+      "min_interval_ms": 1000,
+      "max_repeat_count": 100,
+      "auto_exploit_on_detection": false,
+      "gpio_trigger_enabled": true
+    },
+    "exploit": {
+      "target_devices": [
+        {
+          "name": "Apple A5 DFU",
+          "vid": "0x05AC",
+          "pid": "0x1227",
+          "supported_chips": ["S5L8940X", "S5L8942X", "S5L8945X"]
+        }
+      ],
+      "timeout_ms": 5000,
+      "retry_count": 3,
+      "heap_feng_shui_iterations": 620
+    },
+    "logging": {
+      "level": "INFO",
+      "serial_enabled": true,
+      "serial_baud": 115200,
+      "web_logging": true,
+      "file_logging": false
+    },
+    "security": {
+      "web_auth_enabled": false,
+      "api_rate_limiting": true,
+      "usb_device_whitelist": [],
+      "secure_boot": false
+    },
+    "performance": {
+      "cpu_frequency_mhz": 240,
+      "flash_frequency_mhz": 80,
+      "psram_enabled": true,
+      "task_priorities": {
+        "usb_host": 10,
+        "automation": 5,
+        "web_server": 3
+      },
+      "stack_sizes": {
+        "usb_host_task": 4096,
+        "automation_task": 2048,
+        "web_server_task": 4096
+      }
+    },
+    "build_options": {
+      "debug_enabled": true,
+      "optimization_level": "O2",
+      "assertions_enabled": true,
+      "usb_host_debug": true,
+      "wifi_debug": false
+    }
+  },
+  "usage_examples": {
+    "manual_trigger": {
+      "description": "Press GPIO0 button when DFU device is connected",
+      "steps": [
+        "Connect iOS device in DFU mode",
+        "Press and release GPIO0 button",
+        "Monitor status LED for progress"
+      ]
+    },
+    "web_automation": {
+      "description": "Schedule automated exploitation via web interface",
+      "api_call": {
+        "method": "POST",
+        "url": "http://192.168.4.1/api/schedule",
+        "body": {
+          "interval_ms": 60000,
+          "repeat_count": 5,
+          "auto_exploit": true
+        }
+      }
+    },
+    "continuous_monitoring": {
+      "description": "Enable auto-exploitation on device detection",
+      "config": {
+        "automation": {
+          "enabled": true,
+          "auto_exploit_on_detection": true
+        }
+      }
+    }
+  }
+}
