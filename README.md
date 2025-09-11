@@ -16,24 +16,52 @@ git checkout cd87628af4a693eeafe1bf04486cf86ba01d29b8
 git apply path/to/usb_host_library.patch
 ```
 
-### ESP32-S3 Port
+### ESP32-S3 Enhanced Port
 
-This repository also includes an experimental port for the ESP32-S3 using TinyUSB. The MAX3421E shield is no longer required.
+This repository includes a **comprehensive ESP32-S3 implementation** with dual USB-C support and full automation capabilities. The ESP32-S3 port is completely self-contained and requires no external MCU or USB Host Shield.
 
-To build the ESP32 variant use Arduino CLI (board package `esp32` required):
+#### Features of the ESP32-S3 Port
+
+- **🔧 Full Containment**: No external Arduino or MCU required - all functionality runs natively on ESP32-S3
+- **🔌 Dual USB-C Support**: Both USB-C ports supported with role switching and power management
+- **🤖 Automation Ready**: FreeRTOS-based scheduling, web interface, and GPIO triggers
+- **🌐 Web Control**: Complete REST API and dashboard accessible via WiFi AP
+- **⚡ Self-Contained**: WiFi AP, web server, and exploit engine all run on-device
+
+#### Quick Start with ESP32-S3
+
+```bash
+# Navigate to ESP32-S3 implementation
+cd esp32s3
+
+# Build with PlatformIO (recommended)
+pio run -e esp32s3 -t upload
+
+# Or build with Arduino CLI
+../arduino-cli compile --fqbn esp32:esp32:esp32s3 checkm8_esp32s3.ino
+```
+
+#### Usage
+1. **Connect to WiFi**: Join "ESP32S3-CheckM8" network (password: "checkm8esp32")
+2. **Open Web Interface**: Navigate to http://192.168.4.1
+3. **Connect Target**: Put iOS device in DFU mode and connect to USB-C port
+4. **Start Exploit**: Use web interface or press GPIO0 button
+
+#### Legacy ESP32 Port (Basic)
+
+The original experimental ESP32 port using TinyUSB is still available in the `src/` directory:
+
 ```bash
 ./arduino-cli compile --fqbn esp32:esp32:esp32s3 src
 ```
-The port's source resides in `src/main.cpp`.
 
-An `arduino-cli` binary archive (`arduino-cli_1.2.2_Linux_64bit.tar.gz`) is
-provided in the repository. Extract it with:
+An `arduino-cli` binary archive (`arduino-cli_1.2.2_Linux_64bit.tar.gz`) is provided in the repository. Extract it with:
 
 ```bash
 tar -xf arduino-cli_1.2.2_Linux_64bit.tar.gz
 ```
 
-and invoke `./arduino-cli` as shown above.
+**For new projects, we recommend using the enhanced ESP32-S3 implementation in the `esp32s3/` directory.**
 
 
 ### SoC selection

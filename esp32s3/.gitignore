@@ -1,0 +1,50 @@
+# ESP32-S3 checkm8 .gitignore
+
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+.vscode/
+
+# Arduino IDE
+*.hex
+*.bin
+*.elf
+*.map
+
+# Build artifacts
+build/
+dist/
+*.o
+*.a
+*.so
+*.dylib
+
+# Generated files
+include/build_info.h
+deployment_info.json
+
+# Logs
+*.log
+logs/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Credentials (if any)
+credentials.h
+secrets.h
+wifi_config.h
